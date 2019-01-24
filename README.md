@@ -35,7 +35,7 @@ docker run -v C:\!\data.ignore\efe\.config:/root/.config -it cilerler/efe:latest
 !!! tip Build local image
 
     ```powershell
-    docker build . -t cilerler/efe:local;
+    docker build --rm . -t cilerler/efe:local;
     ```
 
 *(change the `:latest` to `:local` in the command line starts with `docker run`)*
