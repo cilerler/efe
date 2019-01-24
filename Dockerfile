@@ -14,10 +14,18 @@ RUN apt-get update && apt-get install -y \
         p7zip-full p7zip-rar \
         git \
         jq \
+        graphviz \
+        default-jre \
         vim \
         nano \
         mc \
     && rm -rf /var/lib/apt/lists/*
+
+## PlantUML
+RUN mkdir -p /opt/plantuml \
+        && (cd /opt/plantuml; curl -JLO http://sourceforge.net/projects/plantuml/files/plantuml.jar/download) \
+        && echo '#!/bin/sh \njava -jar /opt/plantuml/plantuml.jar "$@" \n' > /usr/local/bin/plantuml \
+        && chmod a+x /usr/local/bin/plantuml
 
 ## Powershell, DotNet Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
