@@ -2,6 +2,8 @@
 
 <!-- ![shields.io](https://img.shields.io/badge/docker-cilerler%2Fefe-blue.svg?logo=docker) -->
 
+[![](https://images.microbadger.com/badges/version/cilerler/efe:latest.svg) ![](https://images.microbadger.com/badges/image/cilerler/efe.svg)](https://microbadger.com/images/cilerler/efe "inspect on microbadger.com")
+
 # efe
 
 ## Kubernetes on Docker-Desktop
@@ -24,6 +26,7 @@ docker stack remove --namespace myapps mystack;
 ### Run remote image *(no build need)*
 
 ```powershell
+# use `bash` instead of `pwsh` if you want a bash shell
 docker run -v C:\!\data.ignore\efe\.config:/root/.config -it cilerler/efe:latest pwsh;
 ```
 
@@ -48,4 +51,16 @@ docker run -v C:\!\data.ignore\efe\.config:/root/.config -it cilerler/efe:latest
 
 ```powershell
 cloudcmd --terminal --terminal-path `gritty --path` --save
+```
+
+## Midnight Commander
+
+```powershell
+mc
+```
+
+## PlantUml
+
+```powershell
+plantuml <filename>.puml
 ```
