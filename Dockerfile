@@ -55,7 +55,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 RUN npm config set user 0 \
     && npm install --production -g \
         @angular/cli \
-        cloudcmd
+        cloudcmd \
         gritty
 
 EXPOSE 8000
