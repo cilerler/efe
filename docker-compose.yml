@@ -21,7 +21,7 @@ services:
   mssql:
     # mcr.microsoft.com/mssql/server:2017-CU12-ubuntu
     # mcr.microsoft.com/mssql-tools:latest
-    image: cilerler/mssql-server-linux:latest
+    image: cilerler/mssql-server-linux:2017-CU12
     ports:
       - "1433:1433"
     environment:
