@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
         lsb-release \
         software-properties-common \ 
         dirmngr \
+        vim \
+        nano \
         wget \    
         curl \
         p7zip-full p7zip-rar \
@@ -16,8 +18,6 @@ RUN apt-get update && apt-get install -y \
         jq \
         graphviz \
         default-jre \
-        vim \
-        nano \
         mc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -52,7 +52,6 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-xenial" \
     && apt-get update && apt-get install -y \
         google-cloud-sdk \
         kubectl
-    # && gcloud init
 
 ## NodeJs w/ NPM 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
@@ -65,6 +64,9 @@ RUN npm config set user 0 \
         @angular/cli \
         cloudcmd \
         gritty
+
+## Clear out the local repository of retrieved package files
+RUN apt-get clean
 
 EXPOSE 8000
 
