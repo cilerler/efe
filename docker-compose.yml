@@ -1,0 +1,76 @@
+version: '3.4'
+services:
+  healthchecksui:
+    image: xabarilcoding/healthchecksui:latest
+    ports:
+      - "5000:80"
+    environment:
+      - HealthChecks-UI:EvaluationTimeOnSeconds=10
+      - HealthChecks-UI:MinimumSecondsBetweenFailureNotifications=60
+      - HealthChecks-UI:HealthChecks:0:Name=httpBasic
+      - HealthChecks-UI:HealthChecks:0:Uri=http://localhost:47920/health        
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "5341:5341"
+      - "15341:80"
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - /c/!/data.ignore/seq:/data
+  mssql:
+    # mcr.microsoft.com/mssql/server:2017-CU12-ubuntu
+    # mcr.microsoft.com/mssql-tools:latest
+    image: cilerler/mssql-server-linux:latest
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - SSIS_PID=Developer
+      - SA_PASSWORD=Pass@word
+    volumes:
+      - /c/!/data.ignore/mssql:/var/opt/mssql
+  rabbitmq:
+    image: rabbitmq:3.7.8-management-alpine
+    command: bash -c "rabbitmq-plugins enable rabbitmq_shovel rabbitmq_shovel_management && rabbitmq-server"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /c/!/data.ignore/rabbitmq:/var/lib/rabbitmq/mnesia
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=unique-erlang-cookie
+    hostname: rabbit-1
+  redis:
+    image: redis:5.0.3-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - /c/!/data.ignore/redis:/data
+  redisCommander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "16379:8081"
+    depends_on:
+      - redis
+  grafana:
+    image: grafana/grafana:5.4.3
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-azure-monitor-datasource,grafana-azure-data-explorer-datasource,grafana-clock-panel,grafana-simple-json-datasource,grafana-kubernetes-app,raintank-worldping-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - /c/!/data.ignore/grafana:/var/lib/grafana
+  mongo:
+    image: mongo:4.1.7
+    ports:
+      - "27017:27017"
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    links:
+      - mongo
