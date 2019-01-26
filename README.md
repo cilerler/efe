@@ -11,14 +11,14 @@
 ### Deploy docker-compose to Kubernetes
 
 ```powershell
-docker stack deploy --namespace myapps --compose-file docker-compose.yml mystack;
+docker stack deploy --namespace myapps --compose-file docker-compose.yml mystack
 
 ```
 
 ### Remove deployed stack from Kubernetes
 
 ```powershell
-docker stack remove --namespace myapps mystack;
+docker stack remove --namespace myapps mystack
 ```
 
 ## Dev-Ops terminal *(except the IDE)*
@@ -26,8 +26,25 @@ docker stack remove --namespace myapps mystack;
 ### Run remote image *(no build need)*
 
 ```powershell
-# use `bash` instead of `pwsh` if you want a bash shell
-docker run -v C:\!\data.ignore\efe\.config:/root/.config -it cilerler/efe:latest pwsh;
+docker run --interactive --tty --volume C:\!\data.ignore\efe\.config:/root/.config cilerler/efe:latest pwsh
+```
+
+OR
+
+```powershell
+docker run -it -v C:\!\data.ignore\efe\.config:/root/.config cilerler/efe:latest bash
+```
+
+OR
+
+```powershell
+docker run -it -v C:\!\data.ignore\efe\.config:/root/.config cilerler/efe:latest zsh
+```
+
+### Stop and remove all exited containers
+
+```powershell
+docker rm $(docker stop $(docker ps --quiet --all --filter status=exited --filter ancestor=cilerler/efe --filter ancestor=cilerler/efe:local))
 ```
 
 ### Run local image
@@ -43,8 +60,12 @@ docker run -v C:\!\data.ignore\efe\.config:/root/.config -it cilerler/efe:latest
 
 !!! tip
 
-    `-v ~:/root`  
-    `-v /:/mnt/fs`
+    ```powershell
+    --volume        /:/mnt/fs                  # Mount all including container itself
+    --volume       /c:/mnt/HostDriveC
+    --volume        ~:/root/HostDirectoryHome
+    --volume ~/source:/root/source
+    ```
 
 
 ## Cloud Commander with terminal via Gritty

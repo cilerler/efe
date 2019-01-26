@@ -7,9 +7,8 @@ RUN apt-get update && apt-get install -y \
         ca-certificates \
         build-essential \
         lsb-release \
-        software-properties-common \ 
+        software-properties-common \
         dirmngr \
-        vim \
         nano \
         wget \    
         curl \
@@ -23,18 +22,30 @@ RUN apt-get update && apt-get install -y \
 
 ## PlantUML
 RUN mkdir -p /opt/plantuml \
-        && (cd /opt/plantuml; curl -JLO http://sourceforge.net/projects/plantuml/files/plantuml.jar/download) \
-        && echo '#!/bin/sh \njava -jar /opt/plantuml/plantuml.jar "$@" \n' > /usr/local/bin/plantuml \
-        && chmod a+x /usr/local/bin/plantuml
+    && (cd /opt/plantuml; curl -JLO http://sourceforge.net/projects/plantuml/files/plantuml.jar/download) \
+    && echo '#!/bin/sh \njava -jar /opt/plantuml/plantuml.jar "$@" \n' > /usr/local/bin/plantuml \
+    && chmod a+x /usr/local/bin/plantuml \
+    && rm -rf /var/lib/apt/lists/*
+
+## Docker
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    && apt-get update && apt-get install -y \
+        gnupg-agent \    
+        docker-ce \
+    && curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Powershell, DotNet Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb \
     && dpkg -i packages-microsoft-prod.deb \
     && apt-get update && apt-get install -y \
         powershell \
-        # aspnetcore-runtime-2.2
-        # dotnet-runtime-2.2
-        dotnet-sdk-2.2
+        # aspnetcore-runtime-2.2 \
+        # dotnet-runtime-2.2 \
+        dotnet-sdk-2.2 \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Azure-CLI
 RUN AZ_REPO=$(lsb_release -cs) \
@@ -43,7 +54,8 @@ RUN AZ_REPO=$(lsb_release -cs) \
      --keyserver packages.microsoft.com \
      --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF \
     && apt-get update && apt-get install -y \
-        azure-cli
+        azure-cli \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Google Cloud, Kubectl
 RUN export CLOUD_SDK_REPO="cloud-sdk-xenial" \
@@ -51,12 +63,14 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-xenial" \
     && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
     && apt-get update && apt-get install -y \
         google-cloud-sdk \
-        kubectl
+        kubectl \
+    && rm -rf /var/lib/apt/lists/*
 
 ## NodeJs w/ NPM 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && apt-get update && apt-get install -y \
-        nodejs
+        nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Angular, CloudCmd, Gritty
 RUN npm config set user 0 \
@@ -65,8 +79,17 @@ RUN npm config set user 0 \
         cloudcmd \
         gritty
 
-## Clear out the local repository of retrieved package files
-RUN apt-get clean
+## Oh My Zsh
+RUN apt-get update && apt-get install -y \
+        fonts-powerline \
+        zsh \
+    && apt-get update \
+    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" \
+    && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="robbyrussell"/g' ~/.zshrc \
+    && sed -i 's/plugins=(git)/plugins=(git copydir docker docker-compose helm kubectl minikube node npm ubuntu)/g' ~/.zshrc \
+    && rm -rf /var/lib/apt/lists/*
+
+
 
 EXPOSE 8000
 
