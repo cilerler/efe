@@ -93,6 +93,9 @@ RUN apt-get update && apt-get install -y \
     && sed -i 's/plugins=(git)/plugins=(git copydir docker docker-compose helm kubectl minikube node npm ubuntu)/g' ~/.zshrc \
     && rm -rf /var/lib/apt/lists/*
 
+## Ensure update
+RUN apt-get update
+
 
 
 EXPOSE 8000
