@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install -y \
         lsb-release \
         software-properties-common \
         dirmngr \
+        iputils-ping \
+        net-tools \
+        telnet \
+        dnsutils \
         nano \
         wget \    
         curl \
