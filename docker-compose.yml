@@ -32,7 +32,7 @@ services:
     volumes:
       - /c/!/data.ignore/mssql:/var/opt/mssql
   rabbitmq:
-    image: rabbitmq:3.7.8-management-alpine
+    image: rabbitmq:3.7.10-management-alpine
     command: bash -c "rabbitmq-plugins enable rabbitmq_shovel rabbitmq_shovel_management && rabbitmq-server"
     ports:
       - "5672:5672"
@@ -41,6 +41,8 @@ services:
       - /c/!/data.ignore/rabbitmq:/var/lib/rabbitmq/mnesia
     environment:
       - RABBITMQ_ERLANG_COOKIE=unique-erlang-cookie
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=user
     hostname: rabbit-1
   redis:
     image: redis:5.0.3-alpine
@@ -48,7 +50,7 @@ services:
       - "6379:6379"
     volumes:
       - /c/!/data.ignore/redis:/data
-  redisCommander:
+  redis-commander:
     image: rediscommander/redis-commander:latest
     environment:
       - REDIS_HOSTS=local:redis:6379
