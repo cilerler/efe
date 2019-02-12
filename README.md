@@ -12,7 +12,6 @@
 
 ```powershell
 docker stack deploy --namespace myapps --compose-file docker-compose.yml mystack
-
 ```
 
 ### Remove deployed stack from Kubernetes
