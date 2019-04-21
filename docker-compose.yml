@@ -19,9 +19,7 @@ services:
     volumes:
       - /c/!/data.ignore/seq:/data
   mssql:
-    # mcr.microsoft.com/mssql/server:2017-CU12-ubuntu
-    # mcr.microsoft.com/mssql-tools:latest
-    image: cilerler/mssql-server-linux:2017-CU12
+    image: cilerler/mssql-server-linux:2017
     ports:
       - "1433:1433"
     environment:
