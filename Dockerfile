@@ -68,6 +68,7 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-xenial" \
     && apt-get update && apt-get install -y \
         google-cloud-sdk \
         kubectl \
+        kompose \
     && rm -rf /var/lib/apt/lists/*
 
 ## NodeJs w/ NPM 
