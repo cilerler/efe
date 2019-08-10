@@ -64,6 +64,22 @@ services:
       - "3000:3000"
     volumes:
       - /c/!/data.ignore/grafana:/var/lib/grafana
+  prometheus-server:
+    image: prom/prometheus:v2.11.1
+    ports:
+      - "9090:9090"
+  prometheus-pushgateway:
+    image: prom/pushgateway:v0.8.0
+    ports:
+      - "9091:9091"      
+  prometheus-alertmanager:
+    image: prom/alertmanager:v0.18.0
+    ports:
+      - "9093:9093"
+  prometheus-node-exporter:
+    image: prom/node-exporter:v0.18.0
+    ports:
+      - "9100:9100"
   mongo:
     image: mongo:4.1.7
     ports:
