@@ -57,9 +57,9 @@ services:
     depends_on:
       - redis
   grafana:
-    image: grafana/grafana:5.4.3
+    image: grafana/grafana:6.2.5
     environment:
-      - GF_INSTALL_PLUGINS=grafana-azure-monitor-datasource,grafana-azure-data-explorer-datasource,grafana-clock-panel,grafana-simple-json-datasource,grafana-kubernetes-app,raintank-worldping-app
+      - GF_INSTALL_PLUGINS=raintank-worldping-app,grafana-azure-data-explorer-datasource
     ports:
       - "3000:3000"
     volumes:
