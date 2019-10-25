@@ -3,6 +3,12 @@ FROM ubuntu:16.04
 ## Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Docker Compose version
+ARG COMPOSE_VERSION=1.24.0
+ARG KOMPOSE_VERSION=1.19.0
+ARG HELMFILE_VERSION=0.87.1
+ARG NODEJS_VERSION=13
+
 ## This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
 ## this user's GID/UID must match your local user UID/GID to avoid permission issues
 ## with bind mounts. Update USER_UID / USER_GID if yours is not 1000. See
@@ -48,12 +54,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ## Docker https://github.com/microsoft/vscode-dev-containers/blob/master/containers/kubernetes-helm/.devcontainer/Dockerfile
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-    && apt-get update && apt-get install -yq --no-install-recommends \
-        gnupg-agent \
-        docker-ce \
-    && curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose \
+RUN apt-get update \
+    && apt-get install -yq --no-install-recommends apt-transport-https ca-certificates curl gnupg-agent software-properties-common lsb-release \
+    && curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | (OUT=$(apt-key add - 2>&1) || echo $OUT) \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" \
+    && apt-get update \
+    && apt-get install -y docker-ce-cli \
+    && curl -sSL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
     && chmod +x /usr/local/bin/docker-compose \
     && rm -rf /var/lib/apt/lists/*
 
@@ -84,7 +91,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
     && rm -rf /var/lib/apt/lists/*
 
 ## Kompose
-RUN curl -L https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64 -o kompose \
+RUN curl -L https://github.com/kubernetes/kompose/releases/download/v${KOMPOSE_VERSION}/kompose-linux-amd64 -o kompose \
     && chmod +x kompose \
     && mv ./kompose /usr/local/bin/kompose
 
@@ -98,11 +105,11 @@ RUN apt-get update && apt-get install -yq --no-install-recommends sudo \
     && helm plugin install https://github.com/hypnoglow/helm-s3.git \
     && helm plugin install https://github.com/aslafy-z/helm-git.git \
     && helm plugin install https://github.com/rimusz/helm-tiller \
-    && curl -L https://github.com/roboll/helmfile/releases/download/v0.87.1/helmfile_linux_amd64 -o /usr/local/bin/helmfile \
+    && curl -L https://github.com/roboll/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_linux_amd64 -o /usr/local/bin/helmfile \
     && chmod +x /usr/local/bin/helmfile
 
 ## NodeJs w/ NPM https://github.com/microsoft/vscode-dev-containers/blob/master/containers/typescript-node-lts/.devcontainer/Dockerfile
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - \
     && apt-get update && apt-get install -yq --no-install-recommends \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
