@@ -66,6 +66,12 @@ docker rm $(docker stop $(docker ps --quiet --all --filter status=exited --filte
     --volume ~/source:/root/source
     ```
 
+### Additional samples
+
+```powershell
+docker run --rm -it -v ${PWD}:/workspace -v ~/AppData/Roaming/gcloud:/root/.config:ro -v ~/.kube:/root/.kube:ro cilerler/efe:local /bin/bash
+```
+
 
 ## Cloud Commander with terminal via Gritty
 
