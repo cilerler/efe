@@ -114,9 +114,10 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-## Angular, CloudCmd, Gritty
+## TypeScript, tsLint, Angular, CloudCmd, Gritty
 RUN npm config set user 0 \
     && npm install --production -g \
+        tslint typescript \
         @angular/cli \
         cloudcmd \
         gritty
