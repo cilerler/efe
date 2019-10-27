@@ -70,9 +70,9 @@ RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsof
     && dpkg -i packages-microsoft-prod.deb \
     && apt-get update && apt-get install -yq --no-install-recommends \
         powershell \
-        aspnetcore-runtime-3.0 \
+        dotnet-sdk-3.0 \
         # dotnet-runtime-3.0 \
-        # dotnet-sdk-3.0 \
+        # aspnetcore-runtime-3.0 \
     && rm -rf /var/lib/apt/lists/*
 
 ## Azure-CLI https://github.com/microsoft/vscode-dev-containers/blob/master/containers/azure-cli/.devcontainer/Dockerfile
