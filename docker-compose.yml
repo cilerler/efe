@@ -8,7 +8,9 @@ services:
       - HealthChecks-UI:EvaluationTimeInSeconds=10
       - HealthChecks-UI:MinimumSecondsBetweenFailureNotifications=60
       - HealthChecks-UI:HealthChecks:0:Name=httpBasic
-      - HealthChecks-UI:HealthChecks:0:Uri=http://localhost:47920/health        
+      - HealthChecks-UI:HealthChecks:0:Uri=http://localhost:47920/health
+    networks:
+      - efenet
   seq:
     image: datalust/seq:latest
     ports:
@@ -18,6 +20,8 @@ services:
       - ACCEPT_EULA=Y
     volumes:
       - /c/!/data.ignore/seq:/data
+    networks:
+      - efenet
   mssql:
     image: cilerler/mssql-server-linux:2017
     ports:
@@ -29,8 +33,12 @@ services:
       - SA_PASSWORD=Pass@word
     volumes:
       - /c/!/data.ignore/mssql:/var/opt/mssql
+    networks:
+      - efenet
   rabbitmq:
-    image: rabbitmq:3.7.10-management-alpine
+    container_name: rabbitmq
+    hostname: rabbit-1
+    image: rabbitmq:3.8-management-alpine
     command: bash -c "rabbitmq-plugins enable rabbitmq_shovel rabbitmq_shovel_management && rabbitmq-server"
     ports:
       - "5672:5672"
@@ -41,13 +49,16 @@ services:
       - RABBITMQ_ERLANG_COOKIE=unique-erlang-cookie
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=user
-    hostname: rabbit-1
+    networks:
+      - efenet
   redis:
     image: redis:5.0.3-alpine
     ports:
       - "6379:6379"
     volumes:
       - /c/!/data.ignore/redis:/data
+    networks:
+      - efenet
   redis-commander:
     image: rediscommander/redis-commander:latest
     environment:
@@ -56,6 +67,8 @@ services:
       - "16379:8081"
     depends_on:
       - redis
+    networks:
+      - efenet
   grafana:
     image: grafana/grafana:6.2.5
     environment:
@@ -64,32 +77,46 @@ services:
       - "3000:3000"
     volumes:
       - /c/!/data.ignore/grafana:/var/lib/grafana
+    networks:
+      - efenet
   prometheus-server:
     image: prom/prometheus:v2.11.1
     ports:
       - "9090:9090"
+    networks:
+      - efenet
   prometheus-pushgateway:
     image: prom/pushgateway:v0.8.0
     ports:
-      - "9091:9091"      
+      - "9091:9091"
+    networks:
+      - efenet
   prometheus-alertmanager:
     image: prom/alertmanager:v0.18.0
     ports:
       - "9093:9093"
+    networks:
+      - efenet
   prometheus-node-exporter:
     image: prom/node-exporter:v0.18.0
     ports:
       - "9100:9100"
+    networks:
+      - efenet
   mongo:
     image: mongo:4.1.7
     ports:
       - "27017:27017"
+    networks:
+      - efenet
   mongo-express:
     image: mongo-express:latest
     ports:
       - "8081:8081"
     links:
       - mongo
+    networks:
+      - efenet
   postgresql:
     image: postgres:11.1-alpine
     ports:
@@ -99,6 +126,8 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=Pass@word
+    networks:
+      - efenet
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
@@ -107,4 +136,9 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.local
       - PGADMIN_DEFAULT_PASSWORD=Pass@word
     links:
-      - postgresql  
+      - postgresql
+    networks:
+      - efenet
+
+networks:
+  efenet:
