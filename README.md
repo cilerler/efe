@@ -6,20 +6,6 @@
 
 # efe
 
-## Kubernetes on Docker-Desktop
-
-### Deploy docker-compose to Kubernetes
-
-```powershell
-docker stack deploy --namespace myapps --compose-file docker-compose.yml mystack
-```
-
-### Remove deployed stack from Kubernetes
-
-```powershell
-docker stack remove --namespace myapps mystack
-```
-
 ## Dev-Ops terminal *(except the IDE)*
 
 ### Run remote image *(no build need)*
