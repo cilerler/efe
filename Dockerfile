@@ -4,9 +4,9 @@ FROM ubuntu:16.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.24.0
-ARG KOMPOSE_VERSION=1.19.0
-ARG HELMFILE_VERSION=0.87.1
+ARG COMPOSE_VERSION=1.27.4
+ARG KOMPOSE_VERSION=1.21.0
+ARG HELMFILE_VERSION=0.132.1
 ARG NODEJS_VERSION=13
 
 ## This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
@@ -98,8 +98,6 @@ RUN curl -L https://github.com/kubernetes/kompose/releases/download/v${KOMPOSE_V
 ## Helm, HelmFile https://github.com/microsoft/vscode-dev-containers/blob/master/containers/kubernetes-helm/.devcontainer/Dockerfile
 RUN apt-get update && apt-get install -yq --no-install-recommends sudo \
     && curl -L https://git.io/get_helm.sh | bash \
-    && helm init --client-only \
-    && mkdir -p ~/.helm/plugins \
     && helm plugin install https://github.com/databus23/helm-diff \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
     && helm plugin install https://github.com/hypnoglow/helm-s3.git \
