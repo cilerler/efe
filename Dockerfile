@@ -32,6 +32,7 @@ RUN apt-get update \
         iputils-ping \
         net-tools \
         telnet \
+        traceroute \
         dnsutils \
         nano \
         wget \
