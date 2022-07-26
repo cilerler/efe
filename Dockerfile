@@ -31,7 +31,6 @@ RUN apt-get update \
         dirmngr \
         iputils-ping \
         net-tools \
-        netcat \
         telnet \
         traceroute \
         dnsutils \
