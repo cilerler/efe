@@ -12,6 +12,8 @@
 
 ```powershell
 docker run --interactive --tty --volume C:\!\data.ignore\efe\.config:/root/.config cilerler/efe:latest pwsh
+kubectl run -i --tty --image cilerler/efe:latest devsecops --restart=Never --wait --rm pwsh;
+kubectl run -i --tty --image cilerler/efe:latest devsecops --restart=Never --wait --rm bash;
 ```
 
 OR
