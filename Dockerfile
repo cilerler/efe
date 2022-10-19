@@ -4,10 +4,11 @@ FROM ubuntu:16.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Docker Compose version
-ARG COMPOSE_VERSION=1.27.4
-ARG KOMPOSE_VERSION=1.21.0
-ARG HELMFILE_VERSION=0.132.1
-ARG NODEJS_VERSION=13
+ARG COMPOSE_VERSION=2.11.2
+ARG KOMPOSE_VERSION=1.26.1
+ARG HELMFILE_VERSION=0.144.0
+ARG DOTNET_VERSION=6.0
+ARG NODEJS_VERSION=16
 
 ## This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
 ## this user's GID/UID must match your local user UID/GID to avoid permission issues
@@ -35,6 +36,8 @@ RUN apt-get update \
         traceroute \
         dnsutils \
         nano \
+        netcat \
+        nmap \
         wget \
         curl \
         p7zip-full p7zip-rar \
@@ -71,9 +74,9 @@ RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsof
     && dpkg -i packages-microsoft-prod.deb \
     && apt-get update && apt-get install -yq --no-install-recommends \
         powershell \
-        dotnet-sdk-3.1 \
-        # dotnet-runtime-3.1 \
-        # aspnetcore-runtime-3.1 \
+        dotnet-sdk-${DOTNET_VERSION} \
+        # dotnet-runtime-${DOTNET_VERSION} \
+        # aspnetcore-runtime-${DOTNET_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
 ## Azure-CLI https://github.com/microsoft/vscode-dev-containers/blob/master/containers/azure-cli/.devcontainer/Dockerfile
@@ -98,7 +101,9 @@ RUN curl -L https://github.com/kubernetes/kompose/releases/download/v${KOMPOSE_V
 
 ## Helm, HelmFile https://github.com/microsoft/vscode-dev-containers/blob/master/containers/kubernetes-helm/.devcontainer/Dockerfile
 RUN apt-get update && apt-get install -yq --no-install-recommends sudo \
-    && curl -L https://git.io/get_helm.sh | bash \
+    && curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list \
+    && apt-get update && apt-get install -yq --no-install-recommends helm \
     && helm plugin install https://github.com/databus23/helm-diff \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
     && helm plugin install https://github.com/hypnoglow/helm-s3.git \
@@ -113,13 +118,13 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODEJS_VERSION}.x | bash - \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-## TypeScript, tsLint, Angular, CloudCmd, Gritty
+## TypeScript, Angular, CloudCmd, Gritty
 RUN npm config set user 0 \
-    && npm install --production -g \
-        tslint typescript \
+    && npm install --omit=dev -g \
+        typescript \
         @angular/cli \
-        cloudcmd \
-        gritty
+        cloudcmd
+        # gritty
 
 ## Virtual Screen https://linuxize.com/post/how-to-use-linux-screen/
 RUN apt-get update && apt-get install -yq --no-install-recommends \
@@ -138,11 +143,14 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 ## Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    # [Optional] Add sudo support for the non-root user
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
     && apt-get install -yq --no-install-recommends sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# # [Optional] Set the default user. Omit if you want to keep the default as root.
+# USER $USERNAME
 
 ## Clean up
 RUN apt-get update \
