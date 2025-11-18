@@ -27,7 +27,7 @@ RUN apt-get update \
         build-essential \
         lsb-release \
         software-properties-common \
-        iproute2 \ 
+        iproute2 \
         procps \
         dirmngr \
         iputils-ping \
@@ -38,6 +38,7 @@ RUN apt-get update \
         nano \
         netcat \
         nmap \
+		nvtop \
         wget \
         curl \
         p7zip-full p7zip-rar \
@@ -161,7 +162,7 @@ RUN apt-get update \
 ## Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
 
-## 
+##
 EXPOSE 8000
 
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
